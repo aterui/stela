@@ -73,7 +73,7 @@ streams for parallel computation.}
 
 \item{x}{A cmrf object.}
 
-\item{digits}{Print digits.}
+\item{digits}{Digits for printing.}
 }
 \value{
 A list with two components: \code{alpha}, a matrix of coefficients
