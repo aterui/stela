@@ -708,9 +708,10 @@ basin <- function(
 
 #' @rdname basin
 #' @param x A basin object.
+#' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
-print.basin <- function(x, ...) {
+print.basin <- function(x, digits = digits, ...) {
 
   cat("\n--------------\n")
   cat("Basin analysis\n")
@@ -732,7 +733,7 @@ print.basin <- function(x, ...) {
 
   ## basin summary
   cat("\n[Basins]\n")
-  print(x$pruned$summary, row.names = FALSE)
+  print(x$pruned$summary, row.names = FALSE, digits = digits)
 
   ## processing time
   if (!is.null(attr(x, "process_time"))) {
@@ -1075,6 +1076,7 @@ egap <- function(
 
 #' @rdname egap
 #' @param x An egap object.
+#' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
 print.egap <- function(x, ...) {
@@ -1084,11 +1086,11 @@ print.egap <- function(x, ...) {
   cat("-------------------\n")
 
   cat("\n[Energy gap]\n")
-  print(x$gap, row.names = TRUE)
+  print(x$gap, row.names = TRUE, digits = digits)
 
   ## basin summary
   cat("\n[Basins]\n")
-  print(x$summary, row.names = FALSE)
+  print(x$summary, row.names = FALSE, digits = digits)
 
   invisible(x)
 }
@@ -1413,11 +1415,11 @@ print.cmrf <- function(x, digits = 2, ...) {
 
   cat("\nEnvironmental effects:\n\n")
   colnames(x$alpha) <- nms
-  print(x$alpha, digits)
+  print(x$alpha, digits = digits)
 
   cat("\nAssociations:\n\n")
   dimnames(x$beta) <- list(nms, nms)
-  print(x$beta, digits)
+  print(x$beta, digits = digits)
 
   if (!is.null(attr(x, "warning"))) {
     cat("\nWarning:\n")
