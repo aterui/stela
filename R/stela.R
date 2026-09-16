@@ -711,7 +711,7 @@ basin <- function(
 #' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
-print.basin <- function(x, digits = digits, ...) {
+print.basin <- function(x, digits = 2, ...) {
 
   cat("\n--------------\n")
   cat("Basin analysis\n")
@@ -1079,7 +1079,7 @@ egap <- function(
 #' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
-print.egap <- function(x, ...) {
+print.egap <- function(x, digits = 2, ...) {
 
   cat("\n-------------------\n")
   cat("Energy gap analysis\n")
