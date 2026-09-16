@@ -1396,9 +1396,10 @@ cmrf <- function(
 
 #' @rdname cmrf
 #' @param x A cmrf object.
-#' @param digits Print digits.
+#' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
+
 print.cmrf <- function(x, digits = 2, ...) {
 
   n <- nrow(attr(x, "Y"))
