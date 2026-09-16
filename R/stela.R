@@ -1112,6 +1112,13 @@ print.egap <- function(x, ...) {
 #'   See [glmnet::cv.glmnet()] for details.
 #' @param grouped Logical; whether to use grouped cross-validation statistics.
 #'   Defaults to \code{TRUE}. See [glmnet::cv.glmnet()] for details.
+#' @param offset A vector of values that will be used as an offset term.
+#'   Defaults to \code{NULL}.
+#' @param standardize Logical flag for x variable standardization,
+#'   prior to fitting the model sequence. See [glmnet::glmnet()] for details.
+#' @param penalty.factor User-defined penalty factors that will be applied to each coefficient.
+#'   This is a number that multiplies \code{lambda} to allow differential shrinkage.
+#'   See [glmnet::glmnet()] for details.
 #' @param control A named list of algorithm control parameters for [glmnet::cv.glmnet()],
 #'   providing per-call overrides of session defaults set by [glmnet::glmnet.control()].
 #'   See [glmnet::glmnet()] for details.
@@ -1123,12 +1130,14 @@ print.egap <- function(x, ...) {
 #' @param future.seed Logical; whether to generate reproducible random-number
 #'   streams for parallel computation.
 #' @param progress Logical; whether to show a progress bar.
-#' @param ... Additional arguments passed to [glmnet::cv.glmnet()] and [glmnet::glmnet()].
+#' @param ... Additional arguments passed to [glmnet::cv.glmnet()].
 #'
 #' @return A list with two components: \code{alpha}, a matrix of coefficients
 #'   for predictors in \code{X}, and \code{beta}, a symmetric matrix of
 #'   pairwise coefficients among response variables. The diagonal of
-#'   \code{beta} is set to zero. Model-fitting warnings are stored as a
+#'   \code{beta} is set to zero. \code{lambda} is the estimated shrinkage
+#'   factors.
+#'   Model-fitting warnings are stored as a
 #'   \code{"warning"} attribute containing a data frame with the response
 #'   index, response name, and warning message.
 #'
@@ -1137,10 +1146,13 @@ print.egap <- function(x, ...) {
 cmrf <- function(
     Y,
     X = NULL,
-    family = "binomial",
+    family = c("binomial", "poisson", "gaussian"),
     type.measure = "default",
     nfolds = 10,
     grouped = TRUE,
+    offset = NULL,
+    standardize = TRUE,
+    penalty.factor = NULL,
     control = list(),
     lambda.method = c("lambda.min", "lambda.1se"),
     sym.method = "min",
@@ -1157,7 +1169,19 @@ cmrf <- function(
   if (nrow(X) != nrow(Y))
     stop("X and Y must have the same number of rows.")
 
-  ## select the lambda criterion used to extract coefficients
+  nvar <- ncol(X) + ncol(Y) - 1
+  if (is.null(penalty.factor)) {
+    penalty.factor <- rep(1, nvar)
+  } else {
+    if (length(penalty.factor) != nvar)
+      stop("The length of `penalty.factor` should be ", nvar, ".")
+
+    if (any(penalty.factor < 0))
+      stop("`penalty.factor` cannot be negative.")
+  }
+
+  ## select the family/lambda criterion used to extract coefficients
+  family <- match.arg(family)
   lambda.method <- match.arg(lambda.method)
 
   ## assign default names to predictors if column names are absent
@@ -1204,6 +1228,9 @@ cmrf <- function(
         type.measure = type.measure,
         nfolds = nfolds,
         grouped = grouped,
+        offset = offset,
+        standardize = standardize,
+        penalty.factor = penalty.factor,
         control = control
       ),
       list(...)
@@ -1234,7 +1261,7 @@ cmrf <- function(
   ## fit one regularized regression for each response variable in parallel
   if (progress) {
 
-    res <- progressr::with_progress({
+    mout <- progressr::with_progress({
 
       p <- progressr::progressor(steps = ncol(Y))
 
@@ -1249,7 +1276,7 @@ cmrf <- function(
 
   } else {
 
-    res <- future.apply::future_lapply(
+    mout <- future.apply::future_lapply(
       seq_len(ncol(Y)),
       fit,
       future.seed = future.seed
@@ -1258,15 +1285,19 @@ cmrf <- function(
   }
 
   ## extract fitted models from the results
-  list_m <- lapply(res, FUN = `[[`, "model")
+  list_m <- lapply(mout, FUN = `[[`, "model")
+  fit_lambda <- data.frame(
+    species = colnames(Y),
+    lambda = unlist(lapply(list_m, `[[`, lambda.method))
+  )
 
   ## warnings
   list_warn <- lapply(
-    seq_along(res),
+    seq_along(mout),
     function(i) {
 
       ## remove duplicate warning messages for each response
-      warn <- unique(res[[i]]$warning)
+      warn <- unique(mout[[i]]$warning)
 
       ## return NULL when the model produced no warnings
       if (!length(warn)) {
@@ -1346,7 +1377,8 @@ cmrf <- function(
   ## output list
   res <- list(
     alpha = m_a,
-    beta = m_b
+    beta = m_b,
+    lambda = fit_lambda
   )
 
   ## attach model-fitting warnings as an attribute
