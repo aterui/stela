@@ -8,10 +8,13 @@
 cmrf(
   Y,
   X = NULL,
-  family = "binomial",
+  family = c("binomial", "poisson", "gaussian"),
   type.measure = "default",
   nfolds = 10,
   grouped = TRUE,
+  offset = NULL,
+  standardize = TRUE,
+  penalty.factor = NULL,
   control = list(),
   lambda.method = c("lambda.min", "lambda.1se"),
   sym.method = "min",
@@ -40,6 +43,16 @@ See \code{\link[glmnet:cv.glmnet]{glmnet::cv.glmnet()}} for details.}
 \item{grouped}{Logical; whether to use grouped cross-validation statistics.
 Defaults to \code{TRUE}. See \code{\link[glmnet:cv.glmnet]{glmnet::cv.glmnet()}} for details.}
 
+\item{offset}{A vector of values that will be used as an offset term.
+Defaults to \code{NULL}.}
+
+\item{standardize}{Logical flag for x variable standardization,
+prior to fitting the model sequence. See \code{\link[glmnet:glmnet]{glmnet::glmnet()}} for details.}
+
+\item{penalty.factor}{User-defined penalty factors that will be applied to each coefficient.
+This is a number that multiplies \code{lambda} to allow differential shrinkage.
+See \code{\link[glmnet:glmnet]{glmnet::glmnet()}} for details.}
+
 \item{control}{A named list of algorithm control parameters for \code{\link[glmnet:cv.glmnet]{glmnet::cv.glmnet()}},
 providing per-call overrides of session defaults set by \code{\link[glmnet:glmnet.control]{glmnet::glmnet.control()}}.
 See \code{\link[glmnet:glmnet]{glmnet::glmnet()}} for details.}
@@ -66,7 +79,9 @@ streams for parallel computation.}
 A list with two components: \code{alpha}, a matrix of coefficients
 for predictors in \code{X}, and \code{beta}, a symmetric matrix of
 pairwise coefficients among response variables. The diagonal of
-\code{beta} is set to zero. Model-fitting warnings are stored as a
+\code{beta} is set to zero. \code{lambda} is the estimated shrinkage
+factors.
+Model-fitting warnings are stored as a
 \code{"warning"} attribute containing a data frame with the response
 index, response name, and warning message.
 }

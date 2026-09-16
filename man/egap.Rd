@@ -7,7 +7,7 @@
 \usage{
 egap(b, obs, temp = NULL, r = NULL, iter = NULL, th = NULL, seed = NULL)
 
-\method{print}{egap}(x, ...)
+\method{print}{egap}(x, digits = 2, ...)
 }
 \arguments{
 \item{b}{A basin object returned by \code{\link[=basin]{basin()}}. The model parameters
@@ -36,6 +36,8 @@ re-evaluation.}
 barriers. If \code{NULL}, the seed stored in \code{b} is used.}
 
 \item{x}{An egap object.}
+
+\item{digits}{Digits for printing.}
 
 \item{...}{Additional arguments.}
 }

@@ -17,7 +17,7 @@ basin(
   seed = NULL
 )
 
-\method{print}{basin}(x, ...)
+\method{print}{basin}(x, digits = 2, ...)
 }
 \arguments{
 \item{alpha}{A numeric vector of model parameters controlling the intrinsic
@@ -49,6 +49,8 @@ in \code{\link[=rss]{rss()}} and \code{\link[=ridge]{ridge()}}. If \code{NULL}, 
 used.}
 
 \item{x}{A basin object.}
+
+\item{digits}{Digits for printing.}
 
 \item{...}{Additional arguments.}
 }
