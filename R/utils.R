@@ -215,6 +215,14 @@ symmetrize <- function(X,
 
 #' Copy attributes
 #'
+#' Copy specified attributes from one object to another.
+#'
+#' @param x An object to which attributes are copied.
+#' @param from An object from which attributes are copied.
+#' @param attrs A character vector of attribute names to copy.
+#'
+#' @return `x` with the specified attributes copied from `from`.
+#'
 #' @noRd
 
 copy_attrs <- function(x, from, attrs) {
@@ -225,6 +233,17 @@ copy_attrs <- function(x, from, attrs) {
 
 
 #' Get state labels
+#'
+#' Construct labels for states represented by the rows of a matrix.
+#'
+#' The first `s` columns of `x` are interpreted as state variables.
+#' Values within each row are concatenated without a separator to
+#' produce a single label for each state.
+#'
+#' @param x A matrix or matrix-like object containing state variables.
+#' @param s The number of columns of `x` to use when constructing labels.
+#'
+#' @return A character vector containing one label for each row of `x`.
 #'
 #' @noRd
 
