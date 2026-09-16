@@ -76,11 +76,11 @@ streams for parallel computation.}
 \item{digits}{Digits for printing.}
 }
 \value{
-A list with two components: \code{alpha}, a matrix of coefficients
-for predictors in \code{X}, and \code{beta}, a symmetric matrix of
-pairwise coefficients among response variables. The diagonal of
-\code{beta} is set to zero. \code{lambda} is the estimated shrinkage
-factors.
+A list with three components: \code{alpha}, a matrix of coefficients
+for predictors in \code{X}, \code{beta}, a symmetric matrix of
+pairwise coefficients among response variables, and \code{lambda},
+the estimated shrinkage factors.
+The diagonal of \code{beta} is set to zero.
 Model-fitting warnings are stored as a
 \code{"warning"} attribute containing a data frame with the response
 index, response name, and warning message.
