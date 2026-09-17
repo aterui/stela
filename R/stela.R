@@ -1380,12 +1380,13 @@ cmrf <- function(
   res <- list(
     theta = m_a,
     beta = m_b,
-    lambda = fit_lambda
+    lambda = fit_lambda,
+    Y = Y,
+    X = X,
+    glmnet = list_m
   )
 
   ## attach model-fitting warnings as an attribute
-  attr(res, "Y") <- Y
-  attr(res, "X") <- X
   attr(res, "warning") <- df_warn
   attr(res, "class") <- "cmrf"
 
@@ -1402,10 +1403,10 @@ cmrf <- function(
 
 print.cmrf <- function(x, digits = 2, ...) {
 
-  n <- nrow(attr(x, "Y"))
-  ny <- ncol(attr(x, "Y"))
-  nx <- ifelse(is.null(attr(x, "X")), 0, ncol(attr(x, "X")))
-  nms <- abbreviate(colnames(x$alpha))
+  n <- nrow(x$Y)
+  ny <- ncol(x$Y)
+  nx <- ifelse(is.null(x$X), 0, ncol(x$X))
+  nms <- abbreviate(colnames(x$theta))
 
   cat("\n-----------------------------------\n")
   cat("Data:\n")
@@ -1415,8 +1416,8 @@ print.cmrf <- function(x, digits = 2, ...) {
   cat("-----------------------------------\n")
 
   cat("\nEnvironmental effects:\n\n")
-  colnames(x$alpha) <- nms
-  print(x$alpha, digits = digits)
+  colnames(x$theta) <- nms
+  print(x$theta, digits = digits)
 
   cat("\nAssociations:\n\n")
   dimnames(x$beta) <- list(nms, nms)
