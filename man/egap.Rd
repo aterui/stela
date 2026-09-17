@@ -44,7 +44,7 @@ barriers. If \code{NULL}, the seed stored in \code{b} is used.}
 \value{
 A list with three components:
 \describe{
-\item{gap}{A data frame containing the energy gap (\code{gap}), observed-state
+\item{egap}{A data frame containing the energy gap (\code{gap}), observed-state
 energy (\code{energy}), associated stable-state index (\code{ss}), and stable-state
 energy (\code{bottom}) for each observation.}
 \item{state}{The stable states retained after incorporating the observed
