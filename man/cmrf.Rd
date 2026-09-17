@@ -76,7 +76,7 @@ streams for parallel computation.}
 \item{digits}{Digits for printing.}
 }
 \value{
-A list with three components: \code{alpha}, a matrix of coefficients
+A list with three components: \code{theta}, a matrix of coefficients
 for predictors in \code{X}, \code{beta}, a symmetric matrix of
 pairwise coefficients among response variables, and \code{lambda},
 the estimated shrinkage factors.
@@ -89,6 +89,6 @@ index, response name, and warning message.
 Fits a cross-validated regularized regression model for each response
 variable in \code{Y}, using the predictors in \code{X} and the remaining
 response variables as predictors. Coefficients are separated into effects
-of the predictors in \code{X} (\code{alpha}) and pairwise effects among
+of the predictors in \code{X} (\code{theta}) and pairwise effects among
 response variables (\code{beta}).
 }
