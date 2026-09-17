@@ -792,7 +792,7 @@ print.basin <- function(x, digits = 2, ...) {
 #'
 #' @return A list with three components:
 #' \describe{
-#'   \item{gap}{A data frame containing the energy gap (`gap`), observed-state
+#'   \item{egap}{A data frame containing the energy gap (`gap`), observed-state
 #'   energy (`energy`), associated stable-state index (`ss`), and stable-state
 #'   energy (`bottom`) for each observation.}
 #'   \item{state}{The stable states retained after incorporating the observed
@@ -890,7 +890,7 @@ egap <- function(
 
     ## no new stable states were found
     res <- list(
-      gap = with(b$raw, {
+      egap = with(b$raw, {
         data.frame(
           gap = v_e - ss[idx0, "energy", drop = TRUE],
           energy = v_e,
@@ -1004,7 +1004,7 @@ egap <- function(
     res <- list(
       ## energy gap between each observation and its associated
       ## stable state
-      gap = data.frame(
+      egap = data.frame(
         gap = v_e - m_uss[idx1, "energy", drop = TRUE],
         energy = v_e,
         ss = idx1,
@@ -1051,7 +1051,7 @@ egap <- function(
   res <- list(
     ## energy gap between each observation and its associated
     ## stable state
-    gap = data.frame(
+    egap = data.frame(
       gap = v_e - m_uss[idx1, "energy", drop = TRUE],
       energy = v_e,
       ss = idx1,
@@ -1098,7 +1098,7 @@ print.egap <- function(x, digits = 2, ...) {
   cat("-------------------\n")
 
   cat("\n[Energy gap]\n")
-  print(x$gap, row.names = TRUE, digits = digits)
+  print(x$egap, row.names = TRUE, digits = digits)
 
   ## basin summary
   cat("\n[Basins]\n")
