@@ -546,6 +546,20 @@ basin <- function(
 
   colnames(list_ridge$state)[seq_len(s)] <- snm
 
+  if (any(list_ridge$barrier[, "dist"] == 1))
+    warning(
+      "One or more pairs of stable states are neighbors with identical energy ",
+      "(flat bottom). These stable states are merged into one."
+    )
+
+  dmax <- max(list_ridge$barrier[, "e2"] - list_ridge$barrier[, "tp"])
+
+  if (dmax == 0)
+    warning(
+      "The deepest basin has zero depth. ",
+      "All stable states are merged."
+    )
+
   ## return if all states but one are pruned
   if (is.null(list_ss$barrier)) {
 
@@ -561,8 +575,6 @@ basin <- function(
     }
 
     idx_mss <- unique(v_merge)
-
-    warning("All but one stable state were pruned; this may indicate a flat landscape.")
 
     return(
       structure(
