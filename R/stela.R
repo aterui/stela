@@ -1100,7 +1100,7 @@ print.egap <- function(x, digits = 2, ...) {
 #' Fits a cross-validated regularized regression model for each response
 #' variable in \code{Y}, using the predictors in \code{X} and the remaining
 #' response variables as predictors. Coefficients are separated into effects
-#' of the predictors in \code{X} (\code{alpha}) and pairwise effects among
+#' of the predictors in \code{X} (\code{theta}) and pairwise effects among
 #' response variables (\code{beta}).
 #'
 #' @param Y A matrix or data frame of response variables. Must have the same
@@ -1134,7 +1134,7 @@ print.egap <- function(x, digits = 2, ...) {
 #' @param progress Logical; whether to show a progress bar.
 #' @param ... Additional arguments passed to [glmnet::cv.glmnet()].
 #'
-#' @return A list with three components: \code{alpha}, a matrix of coefficients
+#' @return A list with three components: \code{theta}, a matrix of coefficients
 #'   for predictors in \code{X}, \code{beta}, a symmetric matrix of
 #'   pairwise coefficients among response variables, and \code{lambda},
 #'   the estimated shrinkage factors.
@@ -1337,10 +1337,10 @@ cmrf <- function(
                   nm <- rownames(beta)
 
                   ## retain coefficients corresponding to abiotic predictors
-                  alpha <- beta[!(nm %in% colnames(Y))]
-                  names(alpha) <- nm[!(nm %in% colnames(Y))]
+                  theta <- beta[!(nm %in% colnames(Y))]
+                  names(theta) <- nm[!(nm %in% colnames(Y))]
 
-                  alpha
+                  theta
                 })
 
   m_a <- do.call(cbind, l_a)
@@ -1378,7 +1378,7 @@ cmrf <- function(
 
   ## output list
   res <- list(
-    alpha = m_a,
+    theta = m_a,
     beta = m_b,
     lambda = fit_lambda
   )
