@@ -1485,7 +1485,7 @@ const <- function(
   ## match newdata columns to coefficient order
   X <- stats::model.matrix(
     ~.,
-    data = newdata[, pname, drop = FALSE]
+    data = as.data.frame(newdata[, pname, drop = FALSE])
   )
 
   ## calculate linear predictor
