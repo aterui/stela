@@ -448,11 +448,12 @@ basin <- function(
   s <- length(alpha)
 
   ## state names
-  nms <- list(names(alpha), rownames(beta), colnames(beta))
+  f <- ifelse(is.matrix(alpha), colnames, names)
+  nms <- list(f(alpha), rownames(beta), colnames(beta))
 
   if (!is.null(nms[[1]]) &&
       all(vapply(nms, identical, logical(1), nms[[1]]))) {
-    snm <- abbreviate(names(alpha))
+    snm <- abbreviate(f(alpha))
   } else {
     snm <- rep("", s)
   }
