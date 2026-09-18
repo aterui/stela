@@ -1448,14 +1448,14 @@ print.cmrf <- function(x, digits = 2, ...) {
 #'
 #' Calculates constant terms for a given set of predictor values
 #' using a single set of estimated model coefficients. Predictor columns in
-#' \code{newdata} are matched to the coefficient names in \code{parm}.
-#' An intercept, if present in \code{parm}, is included automatically.
+#' \code{newdata} are matched to the coefficient names in \code{theta}.
+#' An intercept, if present in \code{theta}, is included automatically.
 #'
-#' @param parm A matrix or vector of estimated model coefficients. Coefficient
-#'   names must be provided as row names when \code{parm} is a matrix. An
+#' @param theta A matrix or vector of estimated model coefficients. Coefficient
+#'   names must be provided as row names when \code{theta} is a matrix. An
 #'   intercept should be named \code{"(Intercept)"}.
 #' @param newdata A data frame containing new values of the predictors.
-#'   Predictor names must match the row names of \code{parm}, excluding
+#'   Predictor names must match the row names of \code{theta}, excluding
 #'   \code{"(Intercept)"}.
 #'
 #' @return A numeric matrix containing the calculated constant terms for
@@ -1464,12 +1464,12 @@ print.cmrf <- function(x, digits = 2, ...) {
 #' @export
 
 const <- function(
-    parm,
+    theta,
     newdata
 ) {
 
   ## predictor names in coefficient vector
-  pname <- setdiff(rownames(parm), "(Intercept)")
+  pname <- setdiff(rownames(theta), "(Intercept)")
 
   ## check that all predictors are available
   missing <- setdiff(pname, colnames(newdata))
@@ -1488,5 +1488,5 @@ const <- function(
   )
 
   ## calculate linear predictor
-  as.matrix(X %*% parm)
+  as.matrix(X %*% theta)
 }
