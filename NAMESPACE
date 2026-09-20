@@ -8,10 +8,15 @@ export(cmrf)
 export(const)
 export(egap)
 export(energy)
+export(eplot)
 export(findpath)
 export(prune)
 export(ridge)
 export(rss)
 export(stpd)
 importFrom(Rcpp,evalCpp)
+importFrom(mgcv,
+  gam,
+  s
+)
 useDynLib(stela, .registration = TRUE)

@@ -4,15 +4,15 @@
 \alias{const}
 \title{Calculate constant terms from coefficients and new predictor values}
 \usage{
-const(parm, newdata)
+const(theta, newdata)
 }
 \arguments{
-\item{parm}{A matrix or vector of estimated model coefficients. Coefficient
-names must be provided as row names when \code{parm} is a matrix. An
+\item{theta}{A matrix or vector of estimated model coefficients. Coefficient
+names must be provided as row names when \code{theta} is a matrix. An
 intercept should be named \code{"(Intercept)"}.}
 
 \item{newdata}{A data frame containing new values of the predictors.
-Predictor names must match the row names of \code{parm}, excluding
+Predictor names must match the row names of \code{theta}, excluding
 \code{"(Intercept)"}.}
 }
 \value{
@@ -22,6 +22,6 @@ each predictor set in \code{newdata}.
 \description{
 Calculates constant terms for a given set of predictor values
 using a single set of estimated model coefficients. Predictor columns in
-\code{newdata} are matched to the coefficient names in \code{parm}.
-An intercept, if present in \code{parm}, is included automatically.
+\code{newdata} are matched to the coefficient names in \code{theta}.
+An intercept, if present in \code{theta}, is included automatically.
 }

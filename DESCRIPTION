@@ -22,7 +22,9 @@ Imports:
     stats,
     future.apply,
     glmnet,
-    progressr
+    progressr,
+    vegan,
+    mgcv
 LinkingTo:
     Rcpp,
     RcppArmadillo
