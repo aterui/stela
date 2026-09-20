@@ -1491,3 +1491,319 @@ const <- function(
   ## calculate linear predictor
   as.matrix(X %*% theta)
 }
+
+
+#' Plot an energy landscape in ordination space
+#'
+#' Visualize an ecological energy landscape by projecting observations,
+#' stable states, and tipping points into a two-dimensional ordination space
+#' and fitting a smooth energy surface to the resulting coordinates.
+#' Observations are represented as points on the fitted three-dimensional
+#' energy surface.
+#'
+#' Two ordination methods are available: non-metric multidimensional scaling
+#' (NMDS) using [vegan::metaMDS()] and principal coordinates analysis (PCoA)
+#' using [vegan::wcmdscale()]. Community dissimilarities can be calculated
+#' using Jaccard or Bray-Curtis distance.
+#'
+#' @param obs A community matrix or data frame in which rows represent
+#' observations and columns represent species or other ecological variables.
+#' @param b An energy landscape object containing the pruned stable states and,
+#' optionally, tipping points. The object must contain the pruned$ss and
+#' pruned$tps components and alpha and beta attributes.
+#' @param method Character string specifying the ordination method. "nmds"
+#' uses non-metric multidimensional scaling and "pcoa" uses principal
+#' coordinates analysis. Default is "nmds".
+#' @param distance Character string specifying the community dissimilarity
+#' measure. "jaccard" or "bray". Default is "jaccard".
+#' @param resl Integer specifying the resolution of the fitted energy surface
+#' in each ordination dimension. Default is 50.
+#' @param seed Optional integer used to set the random seed for NMDS. If
+#' NULL, the current random-number state is used.
+#' @param theta Numeric value specifying the azimuthal viewing angle of the
+#' three-dimensional perspective plot. Passed to [graphics::persp()].
+#' @param phi Numeric value specifying the colatitude viewing angle of the
+#' three-dimensional perspective plot. Passed to [graphics::persp()].
+#' @param color Character string specifying the RColorBrewer palette used to
+#' represent energy values. Default is "RdBu".
+#' @param ticktype Character string specifying the type of tick marks and
+#' labels displayed by [graphics::persp()]. Default is "simple".
+#' @param ... Additional arguments passed to [vegan::metaMDS()] when
+#' method = "nmds" or to [vegan::wcmdscale()] when method = "pcoa".
+#'
+#' @return An invisible list containing:
+#' \describe{
+#' \item{plot}{The perspective transformation matrix returned by
+#' [graphics::persp()].}
+#' \item{points}{The transformed three-dimensional coordinates of the
+#' observed points.}
+#' \item{data}{A data frame containing the two-dimensional ordination
+#' coordinates, energy values, and state type for each point.}
+#' \item{surface}{A matrix containing predicted energy values over the
+#' ordination grid.}
+#' \item{x}{The sequence of values used for the first ordination axis.}
+#' \item{y}{The sequence of values used for the second ordination axis.}
+#' \item{ordination}{The fitted ordination object returned by
+#' [vegan::metaMDS()] or [vegan::wcmdscale()].}
+#' \item{model}{The fitted GAM used to estimate the energy surface.}
+#' }
+#'
+#' @details
+#' The energy of each observation, stable state, and tipping point is
+#' calculated using the alpha and beta parameters stored in b. A
+#' generalized additive model with a two-dimensional smooth,
+#' energy ~ s(x, y), is then fitted to the energy values in ordination
+#' space. The predicted surface is displayed using [graphics::persp()], with
+#' color representing predicted energy.
+#'
+#' The color bar represents the range of predicted energy values across the
+#' fitted surface. Observed communities are overlaid on the surface after
+#' transformation into the perspective coordinate system.
+#'
+#' @importFrom mgcv gam s
+#'
+#' @export
+
+eplot <- function(
+    obs,
+    b,
+    method = c("nmds", "pcoa"),
+    distance = c("jaccard", "bray"),
+    resl = 50,
+    seed = NULL,
+    theta = 40,
+    phi = 50,
+    color = "RdBu",
+    ticktype = "simple",
+    ...
+) {
+
+  method <- match.arg(method)
+  distance <- match.arg(distance)
+
+  ## --- stable states and tipping points ---
+
+  sse <- b$pruned$ss
+  tpse <- b$pruned$tps
+
+  ssr <- sse[, -ncol(sse), drop = FALSE]
+  rownames(ssr) <- paste0("ss", seq_len(nrow(ssr)))
+
+  if (!is.null(tpse)) {
+    tps <- unique(
+      tpse[, -((ncol(tpse) - 2):ncol(tpse)), drop = FALSE]
+    )
+    rownames(tps) <- paste0("tp", seq_len(nrow(tps)))
+    ssr <- rbind(ssr, tps)
+  } else {
+    tps <- NULL
+  }
+
+  ## --- combine with observations ---
+
+  if (ncol(obs) != ncol(ssr)) {
+    stop(
+      "The number of columns in `obs` and stable states/",
+      "tipping points does not match."
+    )
+  }
+
+  m <- rbind(obs, ssr)
+
+  ## --- energy ---
+
+  v_e <- apply(
+    m,
+    1,
+    energy,
+    alpha = attr(b, "alpha"),
+    beta = attr(b, "beta")
+  )
+
+  ## --- ordination ---
+
+  if (method == "nmds") {
+
+    ord <- withr::with_seed(seed, {
+      vegan::metaMDS(
+        comm = m,
+        distance = distance,
+        k = 2,
+        ...
+      )
+    })
+
+    xy <- list(
+      points = cbind(ord$points, energy = v_e),
+      stress = ord$stress
+    )
+
+  } else {
+
+    ord <- vegan::wcmdscale(
+      d = vegan::vegdist(m, method = distance),
+      k = 2,
+      eig = TRUE,
+      add = TRUE,
+      ...
+    )
+
+    xy <- list(
+      points = cbind(ord$points, energy = v_e),
+      gof = ord$GOF
+    )
+  }
+
+  colnames(xy$points)[1:2] <- c("x", "y")
+
+  ## --- data frame ---
+
+  dfxy <- as.data.frame(xy$points)
+
+  dfxy$type <- c(
+    rep("obs", nrow(obs)),
+    rep("ss", nrow(sse)),
+    rep("tp", if (is.null(tps)) 0 else nrow(tps))
+  )
+
+  ## --- energy surface ---
+
+  mod <- mgcv::gam(
+    energy ~ s(x, y),
+    family = stats::gaussian(),
+    data = dfxy
+  )
+
+  xseq <- seq(
+    min(dfxy$x),
+    max(dfxy$x),
+    length.out = resl
+  )
+
+  yseq <- seq(
+    min(dfxy$y),
+    max(dfxy$y),
+    length.out = resl
+  )
+
+  newdat <- expand.grid(
+    x = xseq,
+    y = yseq
+  )
+
+  z <- matrix(
+    stats::predict(mod, newdat),
+    nrow = resl,
+    ncol = resl
+  )
+
+  ## --- facet colors ---
+
+  z.facet.center <- (
+    z[-1, -1] +
+      z[-1, -ncol(z)] +
+      z[-nrow(z), -1] +
+      z[-nrow(z), -ncol(z)]
+  ) / 4
+
+  ncol <- 100
+
+  pal <- colorRampPalette(
+    rev(
+      RColorBrewer::brewer.pal(
+        n = 11,
+        name = color
+      )
+    )
+  )
+
+  z.facet.range <- cut(
+    z.facet.center,
+    breaks = ncol,
+    labels = FALSE
+  )
+
+  ## --- plot layout ---
+
+  layout(
+    matrix(
+      c(1, 2),
+      nrow = 1,
+      ncol = 2
+    ),
+    widths = c(5, 1)
+  )
+
+  par(mar = c(5, 4, 2, 1))
+
+  p <- graphics::persp(
+    xseq,
+    yseq,
+    z,
+    theta = theta,
+    phi = phi,
+    ticktype = ticktype,
+    col = pal(ncol)[z.facet.range],
+    border = adjustcolor("black", alpha.f = 0.01),
+    zlim = range(z),
+    zlab = "Energy",
+    xlab = "Axis 1",
+    ylab = "Axis 2"
+  )
+
+  ## observed points
+
+  obs_xyz <- with(
+    subset(dfxy, type == "obs"),
+    grDevices::trans3d(x, y, energy, p)
+  )
+
+  graphics::points(
+    obs_xyz,
+    col = adjustcolor("black", alpha.f = 0.2),
+    pch = 16,
+    cex = 0.5
+  )
+
+  ## color bar
+  par(mar = c(5, 1, 2, 4))
+
+  image(
+    x = 1,
+    y = seq(min(z), max(z), length.out = ncol),
+    z = matrix(
+      seq(min(z), max(z), length.out = ncol),
+      nrow = 1
+    ),
+    col = pal(ncol),
+    axes = FALSE,
+    xlab = NA
+  )
+
+  axis(
+    side = 4,
+    at = pretty(range(z)),
+    las = 1
+  )
+
+  mtext(
+    "Energy",
+    side = 1,
+    line = 1
+  )
+
+  ## --- return ---
+
+  invisible(
+    list(
+      plot = p,
+      points = obs_xyz,
+      data = dfxy,
+      surface = z,
+      x = xseq,
+      y = yseq,
+      ordination = ord,
+      model = mod
+    )
+  )
+}
