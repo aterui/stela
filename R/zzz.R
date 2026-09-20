@@ -1,1 +1,1 @@
-utils::globalVariables(c("e1", "tp"))
+utils::globalVariables(c("e1", "tp", "type"))

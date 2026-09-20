@@ -24,7 +24,10 @@ Imports:
     glmnet,
     progressr,
     vegan,
-    mgcv
+    mgcv,
+    graphics,
+    grDevices,
+    RColorBrewer
 LinkingTo:
     Rcpp,
     RcppArmadillo
