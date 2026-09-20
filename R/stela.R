@@ -1624,14 +1624,27 @@ eplot <- function(
 
   if (method == "nmds") {
 
-    ord <- withr::with_seed(seed, {
-      vegan::metaMDS(
+    if (is.null(seed)) {
+
+      ord <- vegan::metaMDS(
         comm = m,
         distance = distance,
         k = 2,
         ...
       )
-    })
+
+    } else {
+
+      ord <- withr::with_seed(seed, {
+        vegan::metaMDS(
+          comm = m,
+          distance = distance,
+          k = 2,
+          ...
+        )
+      })
+
+    }
 
     xy <- list(
       points = cbind(ord$points, energy = v_e),
@@ -1708,7 +1721,7 @@ eplot <- function(
 
   ncol <- 100
 
-  pal <- colorRampPalette(
+  pal <- grDevices::colorRampPalette(
     rev(
       RColorBrewer::brewer.pal(
         n = 11,
@@ -1725,7 +1738,7 @@ eplot <- function(
 
   ## --- plot layout ---
 
-  layout(
+  graphics::layout(
     matrix(
       c(1, 2),
       nrow = 1,
@@ -1734,7 +1747,7 @@ eplot <- function(
     widths = c(5, 1)
   )
 
-  par(mar = c(5, 4, 2, 1))
+  graphics::par(mar = c(5, 4, 2, 1))
 
   p <- graphics::persp(
     xseq,
@@ -1744,7 +1757,7 @@ eplot <- function(
     phi = phi,
     ticktype = ticktype,
     col = pal(ncol)[z.facet.range],
-    border = adjustcolor("black", alpha.f = 0.01),
+    border = grDevices::adjustcolor("black", alpha.f = 0.01),
     zlim = range(z),
     zlab = "Energy",
     xlab = "Axis 1",
@@ -1760,15 +1773,15 @@ eplot <- function(
 
   graphics::points(
     obs_xyz,
-    col = adjustcolor("black", alpha.f = 0.2),
+    col = grDevices::adjustcolor("black", alpha.f = 0.2),
     pch = 16,
     cex = 0.5
   )
 
   ## color bar
-  par(mar = c(5, 1, 2, 4))
+  graphics::par(mar = c(5, 1, 2, 4))
 
-  image(
+  graphics::image(
     x = 1,
     y = seq(min(z), max(z), length.out = ncol),
     z = matrix(
@@ -1780,13 +1793,13 @@ eplot <- function(
     xlab = NA
   )
 
-  axis(
+  graphics::axis(
     side = 4,
     at = pretty(range(z)),
     las = 1
   )
 
-  mtext(
+  graphics::mtext(
     "Energy",
     side = 1,
     line = 1
