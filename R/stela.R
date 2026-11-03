@@ -1124,16 +1124,26 @@ mlbasin <- function(m,
                     iter = 10000,
                     th = 0.2,
                     progress = TRUE,
-                    seed = NULL,
                     future.seed = TRUE) {
+
+  if(!inherits(m, what = "cmrf"))
+    stop("`m` must be class `cmrf`.")
 
   ## get alpha values for each environmental context
   if (is.null(newdata)) {
-    newdata <- m$X
+    nd <- m$X
+  } else {
+    nd <- newdata
+
+    if (nrow(m$Y) != nrow(newdata))
+      stop("`newdata` must have the same number of rows as `m$Y`.")
+
+    if (nrow(m$X) != nrow(newdata))
+      stop("`newdata` must have the same number of rows as `m$X`.")
   }
 
   m_alpha <- const(theta = m$theta,
-                   newdata = newdata)
+                   newdata = nd)
 
   nr <- nrow(m_alpha)
 
@@ -1149,7 +1159,7 @@ mlbasin <- function(m,
       r = r,
       iter = iter,
       th = th,
-      seed = seed
+      seed = NULL
     )
 
     if (!is.null(p))
@@ -1183,13 +1193,19 @@ mlbasin <- function(m,
 
   }
 
-  df_egap <- lapply(seq_len(nr),
-                    function(i) {
-                      egap(list_basin[[i]], a$Y[i, ])$egap
-                    }) |>
-    do.call(what = rbind)
+  df_egap <- do.call(
+    what = rbind,
+    args = lapply(seq_len(nr),
+                  function(i) {
+                    egap(
+                      b = list_basin[[i]],
+                      obs = m$Y[i, ]
+                    )$egap
+                  })
+  )
 
-  rownames(df_egap) <- rownames(m$Y)
+  if (is.null(newdata))
+    rownames(df_egap) <- rownames(m$Y)
 
   df_egap
 }
