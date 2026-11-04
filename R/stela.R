@@ -1119,8 +1119,9 @@ print.egap <- function(x, digits = 2, ...) {
 #'   context, whereas \code{"local"} evaluates each observed community under
 #'   its corresponding environmental context.
 #' @param newdata Optional data frame containing environmental
-#'   data for which to conduct basin analyses. If \code{NULL}, the original
-#'   environmental data (\code{m$X}) are used. When \code{focus = "local"},
+#'   data for which to conduct basin analyses. Column names must match variable
+#'   names used in [cmrf()]. If \code{NULL}, the original environmental
+#'   data (\code{m$X}) are used. When \code{focus = "local"},
 #'   \code{newdata} must have the same number of rows as both \code{m$X}
 #'   and \code{m$Y}.
 #' @inheritParams basin
@@ -1159,6 +1160,8 @@ mlbasin <- function(m,
                     th = 0.2,
                     progress = TRUE,
                     future.seed = TRUE) {
+
+  pt <- proc.time()
 
   # Check whether the input is a valid cmrf model object
   if (!inherits(m, what = "cmrf"))
@@ -1283,9 +1286,12 @@ mlbasin <- function(m,
   rownames(df_metric) <- NULL
 
   # Return
-  list(
-    metric = df_metric,
-    landscape = list_landscape
+  structure(
+    list(
+      metric = df_metric,
+      landscape = list_landscape
+    ),
+    process_time = (proc.time() - pt)["elapsed"]
   )
 }
 
