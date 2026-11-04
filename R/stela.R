@@ -1295,6 +1295,33 @@ mlbasin <- function(m,
   )
 }
 
+#' @rdname mlbasin
+#' @param x A mlbasin object.
+#' @param digits Digits for printing.
+#' @param ... Additional arguments.
+#' @export
+print.mlbasin <- function(x, digits = 2, n = 10,...) {
+
+  cat("\n-------------------\n")
+  cat("Multi-basin analysis\n")
+  cat("-------------------\n")
+
+  cat("\n[Stability metrics]\n")
+  cat("\nThe first", n, "rows are shown\n")
+  print(head(x$metric, n = n), row.names = TRUE, digits = digits)
+
+  ## processing time
+  if (!is.null(attr(x, "process_time"))) {
+    cat(
+      "\nNumber of landscapes:  ", length(x$landscape), "\n",
+      "\nProcess time:          ", round(attr(x, "process_time"), 3), " sec\n",
+      sep = ""
+    )
+  }
+
+  invisible(x)
+}
+
 #' Fit regularized regressions for a multivariate response (conditional Markov random fields)
 #'
 #' Fits a cross-validated regularized regression model for each response
