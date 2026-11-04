@@ -1190,9 +1190,6 @@ mlbasin <- function(m,
   # Number of environmental contexts to evaluate
   nr <- nrow(m_alpha)
 
-  if (nr == 0L)
-    stop("`newdata` must contain at least one environmental context.")
-
   ## Define internal function for unit basin analysis
   fit <- function(i, p = NULL) {
 
