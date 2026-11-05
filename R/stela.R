@@ -1291,7 +1291,8 @@ mlbasin <- function(m,
       metric = df_metric,
       landscape = list_landscape
     ),
-    process_time = (proc.time() - pt)["elapsed"]
+    process_time = (proc.time() - pt)["elapsed"],
+    class = "mlbasin"
   )
 }
 
@@ -1300,7 +1301,7 @@ mlbasin <- function(m,
 #' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
-print.mlbasin <- function(x, digits = 2, n = 10,...) {
+print.mlbasin <- function(x, digits = 2, n = 10, ...) {
 
   cat("\n-------------------\n")
   cat("Multi-basin analysis\n")
@@ -1308,7 +1309,9 @@ print.mlbasin <- function(x, digits = 2, n = 10,...) {
 
   cat("\n[Stability metrics]\n")
   cat("\nThe first", n, "rows are shown\n")
-  print(head(x$metric, n = n), row.names = TRUE, digits = digits)
+  print(utils::head(x$metric, n = n),
+        row.names = TRUE,
+        digits = digits)
 
   ## processing time
   if (!is.null(attr(x, "process_time"))) {
