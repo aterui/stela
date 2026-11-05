@@ -308,6 +308,7 @@ Rcpp::List ridge_cpp(
     const double temp = 1,
     const double r = 0.01,
     const arma::uword iter = 10000,
+    const bool progress = true,
     Rcpp::Nullable<arma::uvec> index = R_NilValue
 ) {
   // ---- declare ----
@@ -415,7 +416,7 @@ Rcpp::List ridge_cpp(
       // progress
       int pct = static_cast<int>(100.0 * k / nr);
 
-      if (pct != last_pct) {
+      if (pct != last_pct && progress) {
         Rcpp::Rcout << "\rProgress: " << pct << "%" << std::flush;
         last_pct = pct;
       }
