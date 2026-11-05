@@ -245,6 +245,7 @@ ridge <- function(
     temp = 10,
     r = 0.001,
     iter = 10000,
+    progress = TRUE,
     seed = NULL
 ) {
   ## validate input
@@ -260,7 +261,8 @@ ridge <- function(
       beta = beta,
       temp = temp,
       r = r,
-      iter = iter
+      iter = iter,
+      progress = progress
     )
   }
 
@@ -365,6 +367,7 @@ prune <- function(m, th = 0.2) {
 #' @param seed An optional integer used to control random-number generation
 #'   in [rss()] and [ridge()]. If `NULL`, the current random-number state is
 #'   used.
+#' @param progress Logical; whether to show % progress.
 #'
 #' @useDynLib stela, .registration = TRUE
 #' @importFrom Rcpp evalCpp
@@ -429,7 +432,8 @@ basin <- function(
     r = 0.001,
     iter = 10000,
     th = 0.2,
-    seed = NULL
+    seed = NULL,
+    progress = TRUE
 ) {
 
   pt <- proc.time()
@@ -537,7 +541,8 @@ basin <- function(
     temp = temp,
     r = r,
     iter = iter,
-    seed = seed
+    seed = seed,
+    progress = progress
   )
 
   list_ss <- prune(
