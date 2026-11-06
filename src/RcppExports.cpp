@@ -69,8 +69,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ridge_cpp
-Rcpp::List ridge_cpp(const arma::mat& sse, const arma::rowvec& alpha, const arma::mat& beta, const double temp, const double r, const arma::uword iter, Rcpp::Nullable<arma::uvec> index);
-RcppExport SEXP _stela_ridge_cpp(SEXP sseSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP tempSEXP, SEXP rSEXP, SEXP iterSEXP, SEXP indexSEXP) {
+Rcpp::List ridge_cpp(const arma::mat& sse, const arma::rowvec& alpha, const arma::mat& beta, const double temp, const double r, const arma::uword iter, const bool progress, Rcpp::Nullable<arma::uvec> index);
+RcppExport SEXP _stela_ridge_cpp(SEXP sseSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP tempSEXP, SEXP rSEXP, SEXP iterSEXP, SEXP progressSEXP, SEXP indexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -80,8 +80,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double >::type temp(tempSEXP);
     Rcpp::traits::input_parameter< const double >::type r(rSEXP);
     Rcpp::traits::input_parameter< const arma::uword >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< const bool >::type progress(progressSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<arma::uvec> >::type index(indexSEXP);
-    rcpp_result_gen = Rcpp::wrap(ridge_cpp(sse, alpha, beta, temp, r, iter, index));
+    rcpp_result_gen = Rcpp::wrap(ridge_cpp(sse, alpha, beta, temp, r, iter, progress, index));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -114,7 +115,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_stela_stpd_cpp", (DL_FUNC) &_stela_stpd_cpp, 3},
     {"_stela_rss_cpp", (DL_FUNC) &_stela_rss_cpp, 4},
     {"_stela_findpath_cpp", (DL_FUNC) &_stela_findpath_cpp, 7},
-    {"_stela_ridge_cpp", (DL_FUNC) &_stela_ridge_cpp, 7},
+    {"_stela_ridge_cpp", (DL_FUNC) &_stela_ridge_cpp, 8},
     {"_stela_find_shallow_cpp", (DL_FUNC) &_stela_find_shallow_cpp, 1},
     {"_stela_prune_cpp", (DL_FUNC) &_stela_prune_cpp, 2},
     {NULL, NULL, 0}

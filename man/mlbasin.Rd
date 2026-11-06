@@ -36,8 +36,7 @@ data (\code{m$X}) are used. When \code{focus = "local"},
 \code{newdata} must have the same number of rows as both \code{m$X}
 and \code{m$Y}.}
 
-\item{n}{An integer specifying the number of initial states sampled by
-\code{\link[=rss]{rss()}} to identify stable states. Defaults to \code{10000}.}
+\item{n}{Number of rows for printing.}
 
 \item{replace}{A logical value indicating whether initial states are
 sampled with replacement by \code{\link[=rss]{rss()}}. Defaults to \code{TRUE}.}

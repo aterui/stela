@@ -12,6 +12,7 @@ ridge(
   temp = 10,
   r = 0.001,
   iter = 10000,
+  progress = TRUE,
   seed = NULL
 )
 }

@@ -40,6 +40,8 @@ barriers. If \code{NULL}, the seed stored in \code{b} is used.}
 \item{digits}{Digits for printing.}
 
 \item{...}{Additional arguments.}
+
+\item{n}{Number of rows for printing.}
 }
 \value{
 A list with three components:

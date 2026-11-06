@@ -17,8 +17,8 @@ findpath_cpp <- function(s0, s1, alpha, beta, temp = 1, r = 0.01, iter = 10000L)
     .Call(`_stela_findpath_cpp`, s0, s1, alpha, beta, temp, r, iter)
 }
 
-ridge_cpp <- function(sse, alpha, beta, temp = 1, r = 0.01, iter = 10000L, index = NULL) {
-    .Call(`_stela_ridge_cpp`, sse, alpha, beta, temp, r, iter, index)
+ridge_cpp <- function(sse, alpha, beta, temp = 1, r = 0.01, iter = 10000L, progress = TRUE, index = NULL) {
+    .Call(`_stela_ridge_cpp`, sse, alpha, beta, temp, r, iter, progress, index)
 }
 
 find_shallow_cpp <- function(barrier) {

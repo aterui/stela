@@ -14,7 +14,8 @@ basin(
   r = 0.001,
   iter = 10000,
   th = 0.2,
-  seed = NULL
+  seed = NULL,
+  progress = TRUE
 )
 
 \method{print}{basin}(x, digits = 2, ...)
@@ -47,6 +48,8 @@ transitions and merge the corresponding stable states. Defaults to \code{0.2}.}
 \item{seed}{An optional integer used to control random-number generation
 in \code{\link[=rss]{rss()}} and \code{\link[=ridge]{ridge()}}. If \code{NULL}, the current random-number state is
 used.}
+
+\item{progress}{Logical; whether to show \% progress.}
 
 \item{x}{A basin object.}
 
