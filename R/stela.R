@@ -1095,6 +1095,7 @@ egap <- function(
 #' @rdname egap
 #' @param x An egap object.
 #' @param digits Digits for printing.
+#' @param n Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
 print.egap <- function(x, digits = 2, ...) {
@@ -1104,11 +1105,15 @@ print.egap <- function(x, digits = 2, ...) {
   cat("-------------------\n")
 
   cat("\n[Energy gap]\n")
-  print(x$egap, row.names = TRUE, digits = digits)
+  print(utils::head(x$egap),
+        row.names = TRUE,
+        digits = digits)
 
   ## basin summary
   cat("\n[Basins]\n")
-  print(x$summary, row.names = FALSE, digits = digits)
+  print(x$summary,
+        row.names = FALSE,
+        digits = digits)
 
   invisible(x)
 }
@@ -1211,7 +1216,8 @@ mlbasin <- function(m,
       r = r,
       iter = iter,
       th = th,
-      seed = NULL
+      seed = NULL,
+      progress = FALSE
     )
 
     # Update progress after the simulation is completed
@@ -1222,6 +1228,7 @@ mlbasin <- function(m,
   }
 
   ## Run basin simulations in parallel
+  message("Constructing energy landscapes...")
   if (progress) {
 
     # Enable progress reporting through progressr
@@ -1252,11 +1259,14 @@ mlbasin <- function(m,
   }
 
   ## Calculate ecosystem gap for each environmental context
+  message("Calculating stability metrics...")
   if (focus == "landscape") {
     df_metric <- do.call(
       what = rbind,
       args = lapply(seq_len(nr),
                     function(i) {
+
+                      ## calculate energy gap
                       df_egap_i <- egap(
                         b = list_landscape[[i]],
                         obs = m$Y
@@ -1266,6 +1276,13 @@ mlbasin <- function(m,
                           id = rownames(m$Y)
                         )
 
+                      ## progress report
+                      if (progress) {
+                        pct <- round((i / nr) * 100)
+                        cat("\rProgress: ", pct, "%", sep = "")
+                        flush.console()
+                      }
+
                       df_egap_i
                     })
     )
@@ -1274,6 +1291,8 @@ mlbasin <- function(m,
       what = rbind,
       args = lapply(seq_len(nr),
                     function(i) {
+
+                      ## calculate energy gap
                       df_egap_i <- egap(
                         b = list_landscape[[i]],
                         obs = m$Y[i, ]
@@ -1282,6 +1301,13 @@ mlbasin <- function(m,
                           landscape = i,
                           id = rownames(m$Y)[i]
                         )
+
+                      ## progress report
+                      if (progress) {
+                        pct <- round((i / nr) * 100)
+                        cat("\rProgress: ", pct, "%", sep = "")
+                        flush.console()
+                      }
 
                       df_egap_i
                     })
@@ -1304,6 +1330,7 @@ mlbasin <- function(m,
 #' @rdname mlbasin
 #' @param x A mlbasin object.
 #' @param digits Digits for printing.
+#' @param n Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
 print.mlbasin <- function(x, digits = 2, n = 10, ...) {
