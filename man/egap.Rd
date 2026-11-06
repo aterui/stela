@@ -7,7 +7,7 @@
 \usage{
 egap(b, obs, temp = NULL, r = NULL, iter = NULL, th = NULL, seed = NULL)
 
-\method{print}{egap}(x, digits = 2, n = 10, ...)
+\method{print}{egap}(x, digits = 2, nrow = 10, ...)
 }
 \arguments{
 \item{b}{A basin object returned by \code{\link[=basin]{basin()}}. The model parameters
@@ -39,9 +39,9 @@ barriers. If \code{NULL}, the seed stored in \code{b} is used.}
 
 \item{digits}{Digits for printing.}
 
-\item{n}{Number of rows for printing.}
-
 \item{...}{Additional arguments.}
+
+\item{n}{Number of rows for printing.}
 }
 \value{
 A list with three components:
