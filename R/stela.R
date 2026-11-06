@@ -1098,15 +1098,15 @@ egap <- function(
 #' @param n Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
-print.egap <- function(x, digits = 2, n = 10, ...) {
+print.egap <- function(x, digits = 2, nrow = 10, ...) {
 
   cat("\n-------------------\n")
   cat("Energy gap analysis\n")
   cat("-------------------\n")
 
   cat("\n[Energy gap]\n")
-  cat("\nThe first", n, "rows are shown\n")
-  print(utils::head(x$egap, n = n),
+  cat("\nThe first", nrow, "rows are shown\n")
+  print(utils::head(x$egap, n = nrow),
         row.names = TRUE,
         digits = digits)
 
@@ -1331,18 +1331,18 @@ mlbasin <- function(m,
 #' @rdname mlbasin
 #' @param x A mlbasin object.
 #' @param digits Digits for printing.
-#' @param n Number of rows for printing.
+#' @param nrow Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
-print.mlbasin <- function(x, digits = 2, n = 10, ...) {
+print.mlbasin <- function(x, digits = 2, nrow = 10, ...) {
 
   cat("\n--------------------\n")
   cat("Multi-basin analysis\n")
   cat("--------------------\n")
 
   cat("\n[Stability metrics]\n")
-  cat("\nThe first", n, "rows are shown\n")
-  print(utils::head(x$metric, n = n),
+  cat("\nThe first", nrow, "rows are shown\n")
+  print(utils::head(x$metric, n = nrow),
         row.names = TRUE,
         digits = digits)
 
