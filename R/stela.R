@@ -1098,14 +1098,15 @@ egap <- function(
 #' @param n Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
-print.egap <- function(x, digits = 2, ...) {
+print.egap <- function(x, digits = 2, n = 10, ...) {
 
   cat("\n-------------------\n")
   cat("Energy gap analysis\n")
   cat("-------------------\n")
 
   cat("\n[Energy gap]\n")
-  print(utils::head(x$egap),
+  cat("\nThe first", n, "rows are shown\n")
+  print(utils::head(x$egap, n = n),
         row.names = TRUE,
         digits = digits)
 
