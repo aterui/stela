@@ -1336,9 +1336,9 @@ mlbasin <- function(m,
 #' @export
 print.mlbasin <- function(x, digits = 2, n = 10, ...) {
 
-  cat("\n-------------------\n")
+  cat("\n--------------------\n")
   cat("Multi-basin analysis\n")
-  cat("-------------------\n")
+  cat("--------------------\n")
 
   cat("\n[Stability metrics]\n")
   cat("\nThe first", n, "rows are shown\n")
