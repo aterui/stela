@@ -1450,7 +1450,7 @@ cmrf <- function(
     stop("Smallest value allowable for 'nfolds' is 3")
 
   if (nfolds == nrow(Y) && grouped) {
-    message("'grouped' was set FALSE because nfolds = nrow(Y).")
+    message("'grouped' was forced to set FALSE because nfolds = nrow(Y).")
     grouped <- FALSE
   }
 
