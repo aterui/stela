@@ -1649,12 +1649,23 @@ cmrf <- function(
   )
 
   ## output list
+  Y <- data.matrix(Y, rownames.force = TRUE)
+  X <- data.matrix(X, rownames.force = TRUE)
+
+  if (is.null(rownames(Y))) {
+    rownames(Y) <- seq_len(nrow(Y))
+  }
+
+  if (is.null(rownames(X))) {
+    rownames(X) <- seq_len(nrow(X))
+  }
+
   res <- list(
     theta = m_a,
     beta = m_b,
     lambda = fit_lambda,
-    Y = data.matrix(Y),
-    X = data.matrix(X),
+    Y = Y,
+    X = X,
     glmnet = list_m
   )
 
