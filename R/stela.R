@@ -1446,6 +1446,14 @@ cmrf <- function(
       stop("`penalty.factor` cannot be negative.")
   }
 
+  if (nfolds < 3)
+    stop("Smallest value allowable for 'nfolds' is 3")
+
+  if (nfolds == nrow(Y)) {
+    message("'grouped' was set FALSE because nfolds = nrow(Y).")
+    grouped <- FALSE
+  }
+
   ## select the family/lambda criterion used to extract coefficients
   family <- match.arg(family)
   lambda.method <- match.arg(lambda.method)
