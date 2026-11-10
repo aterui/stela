@@ -41,6 +41,8 @@ annealing. Defaults to \code{0.001}.}
 \item{iter}{An integer specifying the number of simulated annealing
 iterations. Defaults to \code{10000}.}
 
+\item{progress}{Logical; whether to show \% progress.}
+
 \item{seed}{An optional integer used to control random-number
 generation. If \code{NULL}, the current random-number state is used.}
 }

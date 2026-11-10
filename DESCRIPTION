@@ -27,7 +27,8 @@ Imports:
     mgcv,
     graphics,
     grDevices,
-    RColorBrewer
+    RColorBrewer,
+    utils
 LinkingTo:
     Rcpp,
     RcppArmadillo
