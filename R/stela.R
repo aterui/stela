@@ -213,6 +213,7 @@ findpath <- function(
 #'   annealing. Defaults to `0.001`.
 #' @param iter An integer specifying the number of simulated annealing
 #'   iterations. Defaults to `10000`.
+#' @param progress Logical; whether to show % progress.
 #' @param seed An optional integer used to control random-number
 #'   generation. If `NULL`, the current random-number state is used.
 #'
@@ -1095,10 +1096,10 @@ egap <- function(
 #' @rdname egap
 #' @param x An egap object.
 #' @param digits Digits for printing.
-#' @param n Number of rows for printing.
+#' @param nrow Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
-print.egap <- function(x, digits = 2, nrow = 10, ...) {
+print.egap <- function(x, digits = 3, nrow = 10, ...) {
 
   cat("\n-------------------\n")
   cat("Energy gap analysis\n")
@@ -1281,7 +1282,7 @@ mlbasin <- function(m,
                       if (progress) {
                         pct <- round((i / nr) * 100)
                         cat("\rProgress: ", pct, "%", sep = "")
-                        flush.console()
+                        utils::flush.console()
                       }
 
                       df_egap_i
@@ -1307,7 +1308,7 @@ mlbasin <- function(m,
                       if (progress) {
                         pct <- round((i / nr) * 100)
                         cat("\rProgress: ", pct, "%", sep = "")
-                        flush.console()
+                        utils::flush.console()
                       }
 
                       df_egap_i
@@ -1334,7 +1335,7 @@ mlbasin <- function(m,
 #' @param nrow Number of rows for printing.
 #' @param ... Additional arguments.
 #' @export
-print.mlbasin <- function(x, digits = 2, nrow = 10, ...) {
+print.mlbasin <- function(x, digits = 3, nrow = 10, ...) {
 
   cat("\n--------------------\n")
   cat("Multi-basin analysis\n")
@@ -1644,8 +1645,8 @@ cmrf <- function(
     theta = m_a,
     beta = m_b,
     lambda = fit_lambda,
-    Y = Y,
-    X = X,
+    Y = data.matrix(Y),
+    X = data.matrix(X),
     glmnet = list_m
   )
 
