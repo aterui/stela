@@ -458,7 +458,7 @@ basin <- function(
 
   if (!is.null(nms[[1]]) &&
       all(vapply(nms, identical, logical(1), nms[[1]]))) {
-    snm <- abbreviate(f(alpha))
+    snm <- f(alpha)
   } else {
     snm <- rep("", s)
   }
