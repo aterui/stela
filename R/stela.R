@@ -730,7 +730,7 @@ basin <- function(
 #' @param digits Digits for printing.
 #' @param ... Additional arguments.
 #' @export
-print.basin <- function(x, digits = 2, ...) {
+print.basin <- function(x, digits = 3, ...) {
 
   cat("\n--------------\n")
   cat("Basin analysis\n")
@@ -1798,6 +1798,7 @@ const <- function(
 #' represent energy values. Default is "RdBu".
 #' @param ticktype Character string specifying the type of tick marks and
 #' labels displayed by [graphics::persp()]. Default is "simple".
+#' @param showss Logical; whether to show stable states.
 #' @param ... Additional arguments passed to [vegan::metaMDS()] when
 #' method = "nmds" or to [vegan::wcmdscale()] when method = "pcoa".
 #'
@@ -1845,6 +1846,7 @@ eplot <- function(
     phi = 50,
     color = "RdBu",
     ticktype = "simple",
+    showss = FALSE,
     ...
 ) {
 
@@ -2047,6 +2049,21 @@ eplot <- function(
     pch = 16,
     cex = 0.5
   )
+
+  ## stable states
+  if (showss) {
+    ss_xyz <- with(
+      subset(dfxy, type == "ss"),
+      grDevices::trans3d(x, y, energy, p)
+    )
+
+    graphics::points(
+      ss_xyz,
+      col = grDevices::adjustcolor("red", alpha.f = 0.4),
+      pch = 16,
+      cex = 0.5
+    )
+  }
 
   ## color bar
   graphics::par(mar = c(5, 1, 2, 4))

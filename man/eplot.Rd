@@ -15,6 +15,7 @@ eplot(
   phi = 50,
   color = "RdBu",
   ticktype = "simple",
+  showss = TRUE,
   ...
 )
 }
@@ -50,6 +51,8 @@ represent energy values. Default is "RdBu".}
 
 \item{ticktype}{Character string specifying the type of tick marks and
 labels displayed by \code{\link[graphics:persp]{graphics::persp()}}. Default is "simple".}
+
+\item{showss}{Logical; whether to show stable states.}
 
 \item{...}{Additional arguments passed to \code{\link[vegan:metaMDS]{vegan::metaMDS()}} when
 method = "nmds" or to \code{\link[vegan:wcmdscale]{vegan::wcmdscale()}} when method = "pcoa".}
