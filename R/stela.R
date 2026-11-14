@@ -1886,7 +1886,7 @@ eplot <- function(
     m <- rbind(obs, ssr)
   } else {
     ## include_ss = FALSE
-    if (show_ss)
+    if (showss)
       stop("To include stable states, set 'showss = TRUE'.")
 
     m <- obs
