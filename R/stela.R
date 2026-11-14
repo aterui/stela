@@ -1955,11 +1955,19 @@ eplot <- function(
 
   dfxy <- as.data.frame(xy$points)
 
-  dfxy$type <- c(
-    rep("obs", nrow(obs)),
-    rep("ss", nrow(sse)),
-    rep("tp", if (is.null(tps)) 0 else nrow(tps))
-  )
+  if (include_ss) {
+
+    dfxy$type <- c(
+      rep("obs", nrow(obs)),
+      rep("ss", nrow(sse)),
+      rep("tp", if (is.null(tps)) 0 else nrow(tps))
+    )
+
+  } else {
+
+    dfxy$type <- rep("obs", nrow(obs))
+
+  }
 
   ## --- energy surface ---
 
