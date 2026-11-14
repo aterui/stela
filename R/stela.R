@@ -1462,9 +1462,15 @@ cmrf <- function(
   if (ncol(X) > 0 && is.null(colnames(X)))
     colnames(X) <- paste0("x", seq_len(ncol(X)))
 
-  ## assign default names to responses if column names are absent
-  if (is.null(colnames(Y)))
+  ## check Y's column names
+  if (is.null(colnames(Y))) {
+    # assign default names to responses if column names are absent
     colnames(Y) <- paste0("y", seq_len(ncol(Y)))
+  } else {
+    # clean column names if any column names are present
+    # this will avoid column name matching errors downstream
+    Y <- janitor::clean_names(Y)
+  }
 
   ## fit regularized regressions
   fit <- function(i, p = NULL) {
