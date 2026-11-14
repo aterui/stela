@@ -1798,6 +1798,7 @@ const <- function(
 #' represent energy values. Default is "RdBu".
 #' @param ticktype Character string specifying the type of tick marks and
 #' labels displayed by [graphics::persp()]. Default is "simple".
+#' @param include_ss Logical; whether to include stable states and tipping points when performing ordination.
 #' @param showss Logical; whether to show stable states.
 #' @param ... Additional arguments passed to [vegan::metaMDS()] when
 #' method = "nmds" or to [vegan::wcmdscale()] when method = "pcoa".
@@ -1846,6 +1847,7 @@ eplot <- function(
     phi = 50,
     color = "RdBu",
     ticktype = "simple",
+    include_ss = FALSE,
     showss = FALSE,
     ...
 ) {
@@ -1872,15 +1874,23 @@ eplot <- function(
   }
 
   ## --- combine with observations ---
+  if (include_ss) {
+    ## include_ss = TRUE
+    if (ncol(obs) != ncol(ssr)) {
+      stop(
+        "The number of columns in `obs` and stable states/",
+        "tipping points does not match."
+      )
+    }
 
-  if (ncol(obs) != ncol(ssr)) {
-    stop(
-      "The number of columns in `obs` and stable states/",
-      "tipping points does not match."
-    )
+    m <- rbind(obs, ssr)
+  } else {
+    ## include_ss = FALSE
+    if (show_ss)
+      stop("To include stable states, set 'showss = TRUE'.")
+
+    m <- obs
   }
-
-  m <- rbind(obs, ssr)
 
   ## --- energy ---
 
