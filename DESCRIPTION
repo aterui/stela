@@ -28,7 +28,8 @@ Imports:
     graphics,
     grDevices,
     RColorBrewer,
-    utils
+    utils,
+    janitor
 LinkingTo:
     Rcpp,
     RcppArmadillo
