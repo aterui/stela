@@ -18,7 +18,7 @@ basin(
   progress = TRUE
 )
 
-\method{print}{basin}(x, digits = 2, ...)
+\method{print}{basin}(x, digits = 3, ...)
 }
 \arguments{
 \item{alpha}{A numeric vector of model parameters controlling the intrinsic

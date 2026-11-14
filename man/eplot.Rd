@@ -15,7 +15,8 @@ eplot(
   phi = 50,
   color = "RdBu",
   ticktype = "simple",
-  showss = TRUE,
+  include_ss = FALSE,
+  showss = FALSE,
   ...
 )
 }
@@ -51,6 +52,8 @@ represent energy values. Default is "RdBu".}
 
 \item{ticktype}{Character string specifying the type of tick marks and
 labels displayed by \code{\link[graphics:persp]{graphics::persp()}}. Default is "simple".}
+
+\item{include_ss}{Logical; whether to include stable states and tipping points when performing ordination.}
 
 \item{showss}{Logical; whether to show stable states.}
 
