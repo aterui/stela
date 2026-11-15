@@ -2015,7 +2015,7 @@ eplot <- function(
       z[-nrow(z), -ncol(z)]
   ) / 4
 
-  ncol <- 100
+  ncolor <- 100
 
   pal <- grDevices::colorRampPalette(
     rev(
@@ -2028,7 +2028,7 @@ eplot <- function(
 
   z.facet.range <- cut(
     z.facet.center,
-    breaks = ncol,
+    breaks = ncolor,
     labels = FALSE
   )
 
@@ -2052,7 +2052,7 @@ eplot <- function(
     theta = theta,
     phi = phi,
     ticktype = ticktype,
-    col = pal(ncol)[z.facet.range],
+    col = pal(ncolor)[z.facet.range],
     border = grDevices::adjustcolor("black", alpha.f = 0.01),
     zlim = range(z),
     zlab = "Energy",
@@ -2094,12 +2094,12 @@ eplot <- function(
 
   graphics::image(
     x = 1,
-    y = seq(min(z), max(z), length.out = ncol),
+    y = seq(min(z), max(z), length.out = ncolor),
     z = matrix(
-      seq(min(z), max(z), length.out = ncol),
+      seq(min(z), max(z), length.out = ncolor),
       nrow = 1
     ),
-    col = pal(ncol),
+    col = pal(ncolor),
     axes = FALSE,
     xlab = NA
   )
