@@ -2046,9 +2046,9 @@ eplot <- function(
   graphics::par(mar = c(5, 4, 2, 1))
 
   p <- graphics::persp(
-    xseq,
-    yseq,
-    z,
+    x = xseq,
+    y = yseq,
+    z = z,
     theta = theta,
     phi = phi,
     ticktype = ticktype,
@@ -2061,7 +2061,6 @@ eplot <- function(
   )
 
   ## observed points
-
   obs_xyz <- with(
     subset(dfxy, type == "obs"),
     grDevices::trans3d(x, y, energy, p)
@@ -2131,3 +2130,4 @@ eplot <- function(
     )
   )
 }
+
