@@ -7,16 +7,19 @@
 eplot(
   obs,
   b,
-  method = c("gllvm", "nmds", "pcoa"),
+  ord.method = c("gllvm", "nmds", "pcoa"),
   distance = c("jaccard", "bray"),
   resl = 50,
+  smoother = c("s", "te"),
   seed = NULL,
   theta = 40,
   phi = 50,
   color = "RdBu",
   ticktype = "simple",
+  alpha.f = 0.4,
   include_ss = FALSE,
   showss = FALSE,
+  key = TRUE,
   ...
 )
 }
@@ -28,7 +31,7 @@ observations and columns represent species or other ecological variables.}
 optionally, tipping points. The object must contain the pruned$ss and
 pruned$tps components and alpha and beta attributes.}
 
-\item{method}{Character string specifying the ordination method.
+\item{ord.method}{Character string specifying the ordination method.
 "gllvm" uses model-based ordination, "nmds" uses non-metric multidimensional
 scaling and "pcoa" uses principal coordinates analysis. Default is "gllvm".}
 
@@ -37,6 +40,9 @@ measure. "jaccard" or "bray". Default is "jaccard".}
 
 \item{resl}{Integer specifying the resolution of the fitted energy surface
 in each ordination dimension. Default is 50.}
+
+\item{smoother}{Character specifying the smoothing function in \code{\link[mgcv:gam]{mgcv::gam()}}.
+"s" (thin-plate spline) or "te" (tensor product). Defaults to "s".}
 
 \item{seed}{Optional integer used to set the random seed for NMDS. If
 NULL, the current random-number state is used.}
@@ -53,9 +59,13 @@ represent energy values. Default is "RdBu".}
 \item{ticktype}{Character string specifying the type of tick marks and
 labels displayed by \code{\link[graphics:persp]{graphics::persp()}}. Default is "simple".}
 
+\item{alpha.f}{Numerical value specifying the transparency of observation points.}
+
 \item{include_ss}{Logical; whether to include stable states and tipping points when performing ordination.}
 
 \item{showss}{Logical; whether to show stable states.}
+
+\item{key}{Logical; whether to show an energy color key.}
 
 \item{...}{Additional arguments passed to \code{\link[vegan:metaMDS]{vegan::metaMDS()}} when
 method = "nmds" or to \code{\link[vegan:wcmdscale]{vegan::wcmdscale()}} when method = "pcoa".}
@@ -93,10 +103,9 @@ using Jaccard or Bray-Curtis distance.
 
 The energy of each observation, stable state, and tipping point is
 calculated using the alpha and beta parameters stored in b. A
-generalized additive model with a two-dimensional smooth,
-energy ~ s(x, y), is then fitted to the energy values in ordination
-space. The predicted surface is displayed using \code{\link[graphics:persp]{graphics::persp()}}, with
-color representing predicted energy.
+generalized additive model with a two-dimensional smooth is then fitted to
+the energy values in ordination space. The predicted surface is displayed
+using \code{\link[graphics:persp]{graphics::persp()}}, with color representing predicted energy.
 
 The color bar represents the range of predicted energy values across the
 fitted surface. Observed communities are overlaid on the surface after
