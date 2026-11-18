@@ -1787,13 +1787,15 @@ const <- function(
 #' @param b An energy landscape object containing the pruned stable states and,
 #' optionally, tipping points. The object must contain the pruned$ss and
 #' pruned$tps components and alpha and beta attributes.
-#' @param method Character string specifying the ordination method.
+#' @param ord.method Character string specifying the ordination method.
 #' "gllvm" uses model-based ordination, "nmds" uses non-metric multidimensional
 #' scaling and "pcoa" uses principal coordinates analysis. Default is "gllvm".
 #' @param distance Character string specifying the community dissimilarity
 #' measure. "jaccard" or "bray". Default is "jaccard".
 #' @param resl Integer specifying the resolution of the fitted energy surface
 #' in each ordination dimension. Default is 50.
+#' @param smoother Character specifying the smoothing function in [mgcv::gam()].
+#' "s" (thin-plate spline) or "te" (tensor product). Defaults to "s".
 #' @param seed Optional integer used to set the random seed for NMDS. If
 #' NULL, the current random-number state is used.
 #' @param theta Numeric value specifying the azimuthal viewing angle of the
@@ -1804,6 +1806,7 @@ const <- function(
 #' represent energy values. Default is "RdBu".
 #' @param ticktype Character string specifying the type of tick marks and
 #' labels displayed by [graphics::persp()]. Default is "simple".
+#' @param alpha.f Numerical value specifying the transparency of observation points.
 #' @param include_ss Logical; whether to include stable states and tipping points when performing ordination.
 #' @param showss Logical; whether to show stable states.
 #' @param ... Additional arguments passed to [vegan::metaMDS()] when
@@ -1845,21 +1848,26 @@ const <- function(
 eplot <- function(
     obs,
     b,
-    method = c("gllvm", "nmds", "pcoa"),
+    ord.method = c("gllvm", "nmds", "pcoa"),
     distance = c("jaccard", "bray"),
     resl = 50,
+    smoother = c("s", "te"),
     seed = NULL,
     theta = 40,
     phi = 50,
     color = "RdBu",
     ticktype = "simple",
+    alpha.f = 0.4,
     include_ss = FALSE,
     showss = FALSE,
     ...
 ) {
 
-  method <- match.arg(method)
+  ord.method <- match.arg(ord.method)
   distance <- match.arg(distance)
+  smoother <- match.arg(smoother)
+  if (!inherits(b, "basin"))
+    stop("'b' must be class 'basin'.")
 
   ## --- stable states and tipping points ---
 
@@ -1913,7 +1921,8 @@ eplot <- function(
   ## NMDS
   xy <-
     switch(
-      method,
+      ord.method,
+
       ## nMDS
       nmds = {
         if (is.null(seed)) {
@@ -2004,10 +2013,27 @@ eplot <- function(
 
   ## --- energy surface ---
 
-  mod <- mgcv::gam(
-    energy ~ s(x, y),
-    family = stats::gaussian(),
-    data = dfxy
+  ## define smoothing function
+  mod <- switch(
+    smoother,
+
+    # thin plate spline
+    s = {
+      mgcv::gam(
+        energy ~ s(x, y),
+        family = stats::gaussian(),
+        data = dfxy
+      )
+    },
+
+    # tensor product
+    te = {
+      mgcv::gam(
+        energy ~ te(x, y),
+        family = stats::gaussian(),
+        data = dfxy
+      )
+    }
   )
 
   xseq <- seq(
@@ -2095,7 +2121,7 @@ eplot <- function(
 
   graphics::points(
     obs_xyz,
-    col = grDevices::adjustcolor("black", alpha.f = 0.2),
+    col = grDevices::adjustcolor("black", alpha.f = alpha.f),
     pch = 16,
     cex = 0.5
   )
@@ -2109,7 +2135,7 @@ eplot <- function(
 
     graphics::points(
       ss_xyz,
-      col = grDevices::adjustcolor("red", alpha.f = 0.4),
+      col = grDevices::adjustcolor("red", alpha.f = alpha.f),
       pch = 16,
       cex = 0.5
     )
