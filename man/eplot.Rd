@@ -7,7 +7,7 @@
 eplot(
   obs,
   b,
-  method = c("nmds", "pcoa"),
+  method = c("gllvm", "nmds", "pcoa"),
   distance = c("jaccard", "bray"),
   resl = 50,
   seed = NULL,
@@ -28,9 +28,9 @@ observations and columns represent species or other ecological variables.}
 optionally, tipping points. The object must contain the pruned$ss and
 pruned$tps components and alpha and beta attributes.}
 
-\item{method}{Character string specifying the ordination method. "nmds"
-uses non-metric multidimensional scaling and "pcoa" uses principal
-coordinates analysis. Default is "nmds".}
+\item{method}{Character string specifying the ordination method.
+"gllvm" uses model-based ordination, "nmds" uses non-metric multidimensional
+scaling and "pcoa" uses principal coordinates analysis. Default is "gllvm".}
 
 \item{distance}{Character string specifying the community dissimilarity
 measure. "jaccard" or "bray". Default is "jaccard".}
