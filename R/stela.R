@@ -1832,10 +1832,9 @@ const <- function(
 #' @details
 #' The energy of each observation, stable state, and tipping point is
 #' calculated using the alpha and beta parameters stored in b. A
-#' generalized additive model with a two-dimensional smooth,
-#' energy ~ s(x, y), is then fitted to the energy values in ordination
-#' space. The predicted surface is displayed using [graphics::persp()], with
-#' color representing predicted energy.
+#' generalized additive model with a two-dimensional smooth is then fitted to
+#' the energy values in ordination space. The predicted surface is displayed
+#' using [graphics::persp()], with color representing predicted energy.
 #'
 #' The color bar represents the range of predicted energy values across the
 #' fitted surface. Observed communities are overlaid on the surface after
@@ -1918,7 +1917,6 @@ eplot <- function(
 
   ## --- ordination ---
 
-  ## NMDS
   xy <-
     switch(
       ord.method,
@@ -2182,5 +2180,116 @@ eplot <- function(
       model = mod
     )
   )
+}
+
+#' Draw an Energy Color Key
+#'
+#' Draws a continuous color key for energy values.
+#'
+#' @param v Numeric vector defining the range of energy values.
+#' @param ncolor Number of colors. Defaults to 100.
+#' @param color ColorBrewer palette name. Defaults to \code{"RdBu"}.
+#' @param orient Orientation of the color key: \code{"v"} (vertical) or
+#'   \code{"h"} (horizontal).
+#' @param tick.side Side for tick marks and labels. One of
+#'   \code{"right"}, \code{"left"}, \code{"bottom"}, or \code{"top"}.
+#'   Defaults according to \code{orient}.
+#' @param text.side Side for the axis title. One of
+#'   \code{"right"}, \code{"left"}, \code{"bottom"}, or \code{"top"}.
+#'   Defaults according to \code{orient}.
+#' @param line Margin line for the axis title. Defaults to 1.
+#' @param las Orientation of tick labels. Defaults to 1.
+#'
+#' @export
+
+ekey <- function(
+    v,
+    ncolor = 100,
+    color = "RdBu",
+    orient = c("v", "h"),
+    tick.side = NULL,
+    text.side = NULL,
+    line = 1,
+    las = 1
+) {
+
+  ## validate input
+  orient <- match.arg(orient)
+
+  if (is.null(tick.side)) {
+    tick.side <- ifelse(orient == "v", "right", "bottom")
+  }
+
+  tick.side <- match.arg(
+    tick.side,
+    choices = c("right", "left", "bottom", "top")
+  )
+
+  tick_code <- c(bottom = 1,
+                 left = 2,
+                 top = 3,
+                 right = 4)[tick.side]
+
+  if (is.null(text.side)) {
+    text.side <- ifelse(orient == "v", "right", "bottom")
+  }
+
+  text.side <- match.arg(
+    text.side,
+    choices = c("right", "left", "bottom", "top")
+  )
+
+  text_code <- c(bottom = 1,
+                 left = 2,
+                 top = 3,
+                 right = 4)[text.side]
+
+  ## define value range
+  r <- seq(min(v), max(v), length.out = ncolor)
+
+  list_v <- switch(
+    orient,
+    v = list(x = 1, y = r),
+    h = list(x = r, y = 1)
+  )
+
+  ## define color palette
+  pal <- grDevices::colorRampPalette(
+    rev(
+      RColorBrewer::brewer.pal(
+        n = 11,
+        name = color
+      )
+    )
+  )
+
+  ## color bar
+  graphics::image(
+    x = list_v$x,
+    y = list_v$y,
+    z = switch(
+      orient,
+      v = matrix(r, nrow = 1),
+      h = matrix(r, ncol = 1)
+    ),
+    col = pal(ncolor),
+    axes = FALSE,
+    xlab = NA,
+    ylab = NA
+  )
+
+  ## axis
+  graphics::axis(
+    side = tick_code,
+    at = pretty(range(v)),
+    las = las
+  )
+
+  graphics::mtext(
+    "Energy",
+    side = text_code,
+    line = line
+  )
+
 }
 
