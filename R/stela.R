@@ -1787,9 +1787,9 @@ const <- function(
 #' @param b An energy landscape object containing the pruned stable states and,
 #' optionally, tipping points. The object must contain the pruned$ss and
 #' pruned$tps components and alpha and beta attributes.
-#' @param method Character string specifying the ordination method. "nmds"
-#' uses non-metric multidimensional scaling and "pcoa" uses principal
-#' coordinates analysis. Default is "nmds".
+#' @param method Character string specifying the ordination method.
+#' "gllvm" uses model-based ordination, "nmds" uses non-metric multidimensional
+#' scaling and "pcoa" uses principal coordinates analysis. Default is "gllvm".
 #' @param distance Character string specifying the community dissimilarity
 #' measure. "jaccard" or "bray". Default is "jaccard".
 #' @param resl Integer specifying the resolution of the fitted energy surface
@@ -1845,7 +1845,7 @@ const <- function(
 eplot <- function(
     obs,
     b,
-    method = c("nmds", "pcoa"),
+    method = c("gllvm", "nmds", "pcoa"),
     distance = c("jaccard", "bray"),
     resl = 50,
     seed = NULL,
@@ -1910,50 +1910,77 @@ eplot <- function(
 
   ## --- ordination ---
 
-  if (method == "nmds") {
+  ## NMDS
+  xy <-
+    switch(
+      method,
+      ## nMDS
+      nmds = {
+        if (is.null(seed)) {
 
-    if (is.null(seed)) {
+          ord <- vegan::metaMDS(
+            comm = m,
+            distance = distance,
+            k = 2,
+            ...
+          )
 
-      ord <- vegan::metaMDS(
-        comm = m,
-        distance = distance,
-        k = 2,
-        ...
-      )
+        } else {
 
-    } else {
+          ord <- withr::with_seed(seed, {
+            vegan::metaMDS(
+              comm = m,
+              distance = distance,
+              k = 2,
+              ...
+            )
+          })
 
-      ord <- withr::with_seed(seed, {
-        vegan::metaMDS(
-          comm = m,
-          distance = distance,
+        }
+
+        # return
+        list(
+          points = cbind(ord$points, energy = v_e),
+          stress = ord$stress
+        )
+      },
+
+      ## PCoA
+      pcoa = {
+
+        ord <- vegan::wcmdscale(
+          d = vegan::vegdist(m, method = distance),
           k = 2,
+          eig = TRUE,
+          add = TRUE,
           ...
         )
-      })
 
-    }
+        ## return
+        list(
+          points = cbind(ord$points, energy = v_e),
+          gof = ord$GOF
+        )
+      },
 
-    xy <- list(
-      points = cbind(ord$points, energy = v_e),
-      stress = ord$stress
-    )
+      ## Model-based ordination
+      gllvm = {
 
-  } else {
+        ord <- gllvm::gllvm(
+          y = m,
+          family = "binomial",
+          num.lv = 2,
+          seed = seed,
+          ...
+        )
 
-    ord <- vegan::wcmdscale(
-      d = vegan::vegdist(m, method = distance),
-      k = 2,
-      eig = TRUE,
-      add = TRUE,
-      ...
-    )
-
-    xy <- list(
-      points = cbind(ord$points, energy = v_e),
-      gof = ord$GOF
-    )
-  }
+        ## return
+        list(
+          points = cbind(ord$lvs, energy = v_e),
+          logL = ord$logL
+        )
+      }
+    ) # end switch()
 
   colnames(xy$points)[1:2] <- c("x", "y")
 
