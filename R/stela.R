@@ -1872,11 +1872,13 @@ eplot <- function(
     stop("'b' must be class 'basin'.")
 
   ## --- graphic setup ---
-  ## Save graphical parameters
-  old.par <- graphics::par(no.readonly = TRUE)
+  if (key) {
+    ## Save graphical parameters
+    old.par <- graphics::par(no.readonly = TRUE)
 
-  ## Restore on function exit, including errors
-  on.exit(graphics::par(old.par), add = TRUE)
+    ## Restore on function exit, including errors
+    on.exit(graphics::par(old.par), add = TRUE)
+  }
 
   ## --- stable states and tipping points ---
 
