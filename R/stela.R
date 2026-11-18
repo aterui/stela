@@ -1809,6 +1809,7 @@ const <- function(
 #' @param alpha.f Numerical value specifying the transparency of observation points.
 #' @param include_ss Logical; whether to include stable states and tipping points when performing ordination.
 #' @param showss Logical; whether to show stable states.
+#' @param key Logical; whether to show an energy color key.
 #' @param ... Additional arguments passed to [vegan::metaMDS()] when
 #' method = "nmds" or to [vegan::wcmdscale()] when method = "pcoa".
 #'
@@ -1859,14 +1860,23 @@ eplot <- function(
     alpha.f = 0.4,
     include_ss = FALSE,
     showss = FALSE,
+    key = TRUE,
     ...
 ) {
 
+  ## --- validate input ---
   ord.method <- match.arg(ord.method)
   distance <- match.arg(distance)
   smoother <- match.arg(smoother)
   if (!inherits(b, "basin"))
     stop("'b' must be class 'basin'.")
+
+  ## --- graphic setup ---
+  ## Save graphical parameters
+  old.par <- graphics::par(no.readonly = TRUE)
+
+  ## Restore on function exit, including errors
+  on.exit(graphics::par(old.par), add = TRUE)
 
   ## --- stable states and tipping points ---
 
@@ -2085,16 +2095,18 @@ eplot <- function(
 
   ## --- plot layout ---
 
-  graphics::layout(
-    matrix(
-      c(1, 2),
-      nrow = 1,
-      ncol = 2
-    ),
-    widths = c(5, 1)
-  )
+  if (key) {
+    graphics::layout(
+      matrix(
+        c(1, 2),
+        nrow = 1,
+        ncol = 2
+      ),
+      widths = c(5, 1)
+    )
 
-  graphics::par(mar = c(5, 4, 2, 1))
+    graphics::par(mar = c(5, 4, 2, 1))
+  }
 
   p <- graphics::persp(
     x = xseq,
@@ -2140,31 +2152,10 @@ eplot <- function(
   }
 
   ## color bar
-  graphics::par(mar = c(5, 1, 2, 4))
-
-  graphics::image(
-    x = 1,
-    y = seq(min(z), max(z), length.out = ncolor),
-    z = matrix(
-      seq(min(z), max(z), length.out = ncolor),
-      nrow = 1
-    ),
-    col = pal(ncolor),
-    axes = FALSE,
-    xlab = NA
-  )
-
-  graphics::axis(
-    side = 4,
-    at = pretty(range(z)),
-    las = 1
-  )
-
-  graphics::mtext(
-    "Energy",
-    side = 1,
-    line = 1
-  )
+  if (key) {
+    graphics::par(mar = c(5, 1, 2, 4))
+    ekey(v = z, ncolor = 100)
+  }
 
   ## --- return ---
 
@@ -2231,7 +2222,7 @@ ekey <- function(
                  right = 4)[tick.side]
 
   if (is.null(text.side)) {
-    text.side <- ifelse(orient == "v", "right", "bottom")
+    text.side <- "bottom"
   }
 
   text.side <- match.arg(
