@@ -29,7 +29,8 @@ Imports:
     grDevices,
     RColorBrewer,
     utils,
-    janitor
+    janitor,
+    gllvm
 LinkingTo:
     Rcpp,
     RcppArmadillo
